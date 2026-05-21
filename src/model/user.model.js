@@ -59,9 +59,6 @@ const userSchema = new mongoose.Schema(
     resetOTP: {
       type: String,
     },
-    resetOTP: {
-      type: String,
-    },
     resetPasswordOTP: {
       type: String,
     },
@@ -81,17 +78,13 @@ const userSchema = new mongoose.Schema(
 
     provider: {
       type: String,
-      anum: ["local", "google", "facebook"],
+      enum: ["local", "google", "facebook"],
       default: "local"
     },
     avatar: {
       type: String,
       default: "",
     },
-    isVerified: {
-      type: Boolean,
-      default:false,
-    }
   },
 
   { timestamps: true },

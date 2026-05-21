@@ -16,10 +16,18 @@ console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 connectDB()
 
 const app = express();
+const allowedOrigins = process.env.CLIENT_URL ? process.env.CLIENT_URL.split(",") : [];
 app.use(cors({
-     origin: "http://localhost:5173",
+     origin: function (origin, callback) {
+         // browser requests bina origin ke bhi ho sakti hain (like Postman or mobile apps)
+         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+             callback(null, true);
+         } else {
+             callback(new Error('Not allowed by CORS'));
+         }
+     },
      credentials: true,
-}))
+}));
 app.use(
   session({
     secret: "risezonicsecret",
@@ -36,7 +44,7 @@ app.use('/api/flights',flightRoutes)
 app.use('/api/auth', userRoutes)
 // app.use('/api/auth', adminMiddleware )
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 7000
 app.listen(PORT, () => {
     console.log(`server running on ${PORT}`);
 })
