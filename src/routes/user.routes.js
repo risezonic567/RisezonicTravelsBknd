@@ -11,7 +11,8 @@ import {
   getProfile,
   forgotPassword,
   resetPassword,
-  verifyResetOTP
+  verifyResetOTP,
+  googleLogin
   
 } from "../controllers/authController.js";
 
@@ -87,40 +88,47 @@ router.get(
 router.get(
   "/google",
   passport.authenticate(
-    "google",
+    googleLogin,
     {
       scope:["profile", "email"],
     }
   )
 );
 
+// router.get(
+//   "/google/callback",
+//   passport.authenticate("google", { failureRedirect: "/login", session: false }),
+//   (req, res) => {
+//     try {
+//       // req.user mein Passport ne hume database ka saved user diya hai
+//       const token = jwt.sign(
+//         { id: req.user._id, role: req.user.role },
+//         process.env.JWT_SECRET,
+//         { expiresIn: "1d" }
+//       );
+
+//       // Token ko HttpOnly cookie mein save karein taaki frontend read/fetch kar sake
+//       res.cookie("token", token, {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === "production",
+//         sameSite: "lax",
+//         maxAge: 24 * 60 * 60 * 1000 // 1 day
+//       });
+
+//       // Ab user ko home page par redirect karein
+//       res.redirect("http://localhost:5173/");
+//     } catch (error) {
+//       console.error("Google Callback Error:", error);
+//       res.redirect("http://localhost:5173/login?error=auth_failed");
+//     }
+//   }
+// );
+
+// Google Auth Callback Route (Ab yahan koi localhost hardcoded nahi hai!)
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login", session: false }),
-  (req, res) => {
-    try {
-      // req.user mein Passport ne hume database ka saved user diya hai
-      const token = jwt.sign(
-        { id: req.user._id, role: req.user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
-
-      // Token ko HttpOnly cookie mein save karein taaki frontend read/fetch kar sake
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 24 * 60 * 60 * 1000 // 1 day
-      });
-
-      // Ab user ko home page par redirect karein
-      res.redirect("http://localhost:5173/");
-    } catch (error) {
-      console.error("Google Callback Error:", error);
-      res.redirect("http://localhost:5173/login?error=auth_failed");
-    }
-  }
+  googleLogin // 🔥 Boom! Saari cookie aur redirect ab ye function handle karega automatic.
 );
 
 export default router;

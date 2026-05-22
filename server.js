@@ -1,6 +1,7 @@
+import dotenv from "dotenv"
+dotenv.config();
 import express from "express"
 import cors from "cors"
-import dotenv from "dotenv"
 import flightRoutes from "./src/routes/flight.routes.js"
 import connectDB from "./src/config/db.js";
 import cookieParser from "cookie-parser";
@@ -9,7 +10,7 @@ import session from "express-session";
 import passport from "passport"
 import "./src/config/passport.js";
 // import adminMiddleware from "./src/middleware/authMiddleware.js"
-dotenv.config();
+
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 

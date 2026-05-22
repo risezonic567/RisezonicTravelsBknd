@@ -660,13 +660,13 @@ export const googleLogin = async (req, res) => {
   try {
     const user = req.user;
 
-    // 1. Access Token (15 minutes)
-    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    // 1. Access Token (.env ke ACCESS_TOKEN_SECRET se match kar diya hai)
+    const accessToken = jwt.sign({ id: user._id, role: user.role }, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "15m",
     });
 
-    // 2. Refresh Token (7 days)
-    const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET, {
+    // 2. Refresh Token (.env ke REFRESH_TOKEN_SECRET se match kar diya hai)
+    const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: "7d",
     });
 
@@ -682,24 +682,25 @@ export const googleLogin = async (req, res) => {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
+      maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // 3. Dynamic Redirect URL Logic
-    const referer = req.headers.referer || "";
+    // 3. Smart Redirect Logic (Bina comma wali tension ke)
     let redirectUrl = "http://localhost:5173"; // Localhost fallback
 
-    if (referer.includes("risezonictravel.com") || process.env.NODE_ENV === "production") {
-      redirectUrl = "https://risezonictravel.com"; // Live domain fallback
+    if (isProduction) {
+      redirectUrl = "https://risezonictravel.com"; // Live frontend domain
     }
 
     console.log("Redirecting user to:", redirectUrl);
-    res.redirect(`${redirectUrl}/`); // User successfully logged in!
+    return res.redirect(`${redirectUrl}/`);
 
   } catch (error) {
     console.error("Google Login Controller Error:", error);
