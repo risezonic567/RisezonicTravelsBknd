@@ -69,26 +69,32 @@ connectDB();
 
 const app = express();
 
-// 🔥 FIXED: .trim() lagaya taaki agar .env mein galti se space ho, toh bhi CORS fail na ho
+
+
+
+// 1. Sabse pehle .env se saare URLs ko split aur trim karke array banao
 const allowedOrigins = process.env.CLIENT_URL 
   ? process.env.CLIENT_URL.split(",").map(url => url.trim()) 
-  : [];
+  : ["http://localhost:5173"]; // Agar env na mile toh default localhost
 
-console.log("CORS Allowed Origins:", allowedOrigins);
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("CORS Fully Allowed Origins:", allowedOrigins);
 
-// CORS Config
+// 2. CORS Middleware Configuration
 app.use(cors({
      origin: function (origin, callback) {
-         // Browser requests bina origin ke bhi ho sakti hain (like Postman/Mobile Apps)
-         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-             callback(null, true);
+         // Browser requests bina origin ke (jaise Postman, ya local files) allow karne ke liye
+         if (!origin) return callback(null, true);
+         
+         // Agar request bhejnewala URL hamare allowedOrigins array mein hai
+         if (allowedOrigins.indexOf(origin) !== -1) {
+             return callback(null, true);
          } else {
-             console.log("Blocked by CORS. Origin was:", origin); // Live logs check karne ke liye helper
-             callback(new Error('Not allowed by CORS'));
+             // Debugging ke liye console mein print hoga ki kaunsa URL block hua
+             console.log("CORS Blocked for Origin:", origin);
+             return callback(new Error('Not allowed by CORS'));
          }
      },
-     credentials: true,
+     credentials: true, // Cookies aur Authorization headers allow karne ke liye
 }));
 
 // Express Session
