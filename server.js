@@ -69,9 +69,6 @@ connectDB();
 
 const app = express();
 
-
-
-
 // 1. Sabse pehle .env se saare URLs ko split aur trim karke array banao
 const allowedOrigins = process.env.CLIENT_URL 
   ? process.env.CLIENT_URL.split(",").map(url => url.trim()) 
