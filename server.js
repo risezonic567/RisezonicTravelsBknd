@@ -109,7 +109,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-import jwt from "jsonwebtoken"; // ensure availability if used elsewhere
+import jwt from "jsonwebtoken"; // ensure availability if used elsewhere ok
 
 app.use(express.json());
 app.use(cookieParser());
@@ -123,7 +123,6 @@ app.get("/", (req, res) => {
 app.use('/api/flights', flightRoutes); // API URL: /api/flights/airports aur /api/flights/search
 app.use('/api/auth', userRoutes);
 
-// Global Error Handler (Agar CORS server crash kare toh use handle karne ke liye)
 app.use((err, req, res, next) => {
   if (err.message === 'Not allowed by CORS') {
     return res.status(403).json({ error: "CORS Error: This origin is not allowed." });
