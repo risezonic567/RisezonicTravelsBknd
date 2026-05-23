@@ -43,7 +43,7 @@ const getCabinPrices = async (
             },
           }
         );
-        const offers = response.data.data.offers || [];
+        const offers = response.data?.data?.offers || [];
         
         const cheapestPrice =
           offers.length > 0
@@ -144,6 +144,7 @@ export const searchFlights = async (req, res) => {
         },
       },
       {
+        timeout: 15000,
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "Duffel-Version": "v2",
@@ -175,6 +176,7 @@ export const searchFlights = async (req, res) => {
     // FINAL DATA
     const flights = await Promise.all(
     offers.map(async (offer) => {
+      // offers.slice(0, 8).map(async (offer) => {
     const firstSlice = offer.slices?.[0];
 
     const routeKey = `${firstSlice.origin?.iata_code}-${firstSlice.destination?.iata_code}-${firstSlice.segments?.[0]?.departing_at?.split("T")[0]}`;

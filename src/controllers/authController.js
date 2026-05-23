@@ -696,7 +696,7 @@ export const googleLogin = async (req, res) => {
     let redirectUrl = "http://localhost:5173"; // Localhost fallback
 
     if (isProduction) {
-      redirectUrl = "https://risezonictravel.com"; // Live frontend domain
+      redirectUrl = "https://www.risezonictravel.com"; // Live frontend domain
     }
 
     console.log("Redirecting user to:", redirectUrl);
@@ -707,7 +707,7 @@ export const googleLogin = async (req, res) => {
     
     // Catch block mein json response ke badle dynamic login page par error query ke sath redirect karein
     const isProduction = process.env.NODE_ENV === "production";
-    const fallbackUrl = isProduction ? "https://risezonictravel.com" : "http://localhost:5173";
+    const fallbackUrl = isProduction ? "https://www.risezonictravel.com" : "http://localhost:5173";
     
     res.redirect(`${fallbackUrl}/login?error=auth_failed`);
   }
